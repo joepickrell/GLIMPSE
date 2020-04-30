@@ -6,7 +6,7 @@ CXXFLAG=-O3
 LDFLAG=-O3
 
 #DYNAMIC LIBRARIES
-DYN_LIBS=-lz -lbz2 -lm -lpthread -llzma
+DYN_LIBS=-lhts -lboost_iostreams -lboost_program_options -lz -lbz2 -lm -lpthread -llzma
 
 #LCC_phase
 BFILE=bin/GLIMPSE_impute
@@ -19,38 +19,14 @@ VPATH=$(shell for file in `find src -name *.cpp`; do echo $$(dirname $$file); do
 desktop: HTSLIB_INC=$(HOME)/Tools/htslib-1.9
 desktop: HTSLIB_LIB=$(HOME)/Tools/htslib-1.9/libhts.a
 desktop: BOOST_INC=/usr/include
-desktop: BOOST_LIB_IO=/usr/lib/x86_64-linux-gnu/libboost_iostreams.a
-desktop: BOOST_LIB_PO=/usr/lib/x86_64-linux-gnu/libboost_program_options.a
 desktop: $(BFILE)
 
-simone_dbg: HTSLIB_INC=$(HOME)/git/htslib
-simone_dbg: HTSLIB_LIB=$(HOME)/git/htslib/libhts.a
-simone_dbg: BOOST_INC=/usr/include
-simone_dbg: BOOST_LIB_IO=/usr/local/lib/libboost_iostreams.a
-simone_dbg: BOOST_LIB_PO=/usr/local/lib/libboost_program_options.a
-simone_dbg: CXXFLAG=-O0 -g
-simone_dbg: LDFLAG=-O0
-simone_dbg: $(BFILE)
-
-simone_opti: HTSLIB_INC=$(HOME)/git/htslib
-simone_opti: HTSLIB_LIB=$(HOME)/git/htslib/libhts.a
-simone_opti: BOOST_INC=/usr/include
-simone_opti: BOOST_LIB_IO=/usr/local/lib/libboost_iostreams.a
-simone_opti: BOOST_LIB_PO=/usr/local/lib/libboost_program_options.a
-simone_opti: $(BFILE)
-
-cluster: HTSLIB_INC=/software/UHTS/Analysis/samtools/1.4/include
-cluster: HTSLIB_LIB=/software/UHTS/Analysis/samtools/1.4/lib64/libhts.a
-cluster: BOOST_INC=/software/include
-cluster: BOOST_LIB_IO=/software/lib64/libboost_iostreams.a
-cluster: BOOST_LIB_PO=/software/lib64/libboost_program_options.a
-cluster: $(BFILE)
 
 #COMPILATION RULES
 all: desktop
 
 $(BFILE): $(OFILE)
-	$(CXX) $(LDFLAG) $^ $(HTSLIB_LIB) $(BOOST_LIB_IO) $(BOOST_LIB_PO) -o $@ $(DYN_LIBS)
+	$(CXX) $(LDFLAG) $^  -o $@ $(DYN_LIBS)
 
 obj/%.o: %.cpp $(HFILE)
 	$(CXX) $(CXXFLAG) -c $< -o $@ -Isrc -I$(HTSLIB_INC) -I$(BOOST_INC)
